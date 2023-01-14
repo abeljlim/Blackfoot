@@ -118,6 +118,12 @@ public class Draw {
                 int sumA = 0;
                 for (int ii = 0; ii < 2; ii++) {
                     for (int jj = 0; jj < 2; jj++) {
+                        // Get weighted (by alpha value) sum:
+
+                        // 1) Get difference from white
+                        // 2) Multiply the difference by the alpha value
+
+                        // 3) Re-apply the difference to the color values
                         // Convert 255,255,255,255 colors to 0,0,0,0 colors
                         if (Arrays.equals(img[2*i+ii][2*j+jj], new int[] {255, 255, 255, 255})) {
                             sumR += 0;
@@ -125,9 +131,21 @@ public class Draw {
                             sumB += 0;
                             sumA += 0;
                         } else {
-                            sumR += img[2*i+ii][2*j+jj][0];
+                            int R = img[2*i+ii][2*j+jj][0];
+                            int A = img[2*i+ii][2*j+jj][3];
+
+                            // 1) Get difference from white
+                            int RDifferenceFromWhite = R - 255;
+                            // 2) Multiply the difference by the alpha value
+                            RDifferenceFromWhite *= A;
+                            // 3) Re-apply the difference to the color values
+                            int RWeightedByAlpha = R + RDifferenceFromWhite;
+
+                            //sumR += img[2*i+ii][2*j+jj][0];
+                            sumR += RWeightedByAlpha;
                             sumG += img[2*i+ii][2*j+jj][1];
                             sumB += img[2*i+ii][2*j+jj][2];
+                            sumA += img[2*i+ii][2*j+jj][3];
                         }
 
                         sumR += img[i * 2 + ii][j * 2 + jj][0];
@@ -140,6 +158,10 @@ public class Draw {
                 newImg[i][j][0] = sumR / 4;
                 newImg[i][j][1] = sumG / 4;
                 newImg[i][j][2] = sumB / 4;
+
+                // Get average alpha
+
+                // Get corresponding 'more opaque' color
             }
         }
         return newImg;
