@@ -13,7 +13,7 @@ public class Draw {
         int[][][] newImg = cmpt120image.getWhiteImage(img[0].length, img.length);
         for (int i = 0; i < img.length; i++) {
             for (int j = 0; j < img[0].length; j++) {
-                if (!(Arrays.equals(img[i][j], new int[] {255, 255, 255}) || img[i][j][3] == 0) /*if alpha is 0 or the color is white*/) {
+                if (!(Arrays.equals(img[i][j], new int[] {255, 255, 255, 255}) || img[i][j][3] == 0) /*if alpha is 0 or the color is white*/) {
                     int[] oldColor = img[i][j];
                     double blackPercent = ((255-oldColor[0]) + (255-oldColor[1]) + (255-oldColor[2])) / (255.0 * 3);
                     // So for color (255,0,0) when blackPercent is 100, newRed would be 255, newGreen would be 0, and newBlue would be 0; and when blackPercent is 0, newRed would be 255, newGreen would be 255, and newBlue would be 255.
@@ -100,12 +100,36 @@ public class Draw {
         // Iterate through each pixel in the new image.
         for (int i = 0; i < newHeight; i++) {
             for (int j = 0; j < newWidth; j++) {
-                // Calculate the sum of the R/G/B values for the corresponding 2x2 block of pixels in the original image.
+                // TODO: Calculate the weighted (by alpha value, where the lower the alpha value, the more white that the color would be) sum of the R/G/B values and the corresponding A value that would be adjusted for the weighting of the sum for the corresponding 2x2 block of pixels in the original image.
+                // Then, convert the color to be one adjusted for alpha, where the corresponding 'more opaque' color and alpha value that would be the average alpha value would be obtained
+                /* E.g. (255,0,0,0), (0,0,0,0), (0,0,0,255), (0,0,0,255) would be calculated to be first ((255+255+0+0), (255+255+0+0), (255+255+0+0), (255+255+255+255)),
+                then we would get the average alpha to be (0+0+255+255)/4 = 127.5,
+                then we would get the corresponding 'more opaque' color to be where the distance from white (i.e. RGB of (255,255,255)) would be divided by (127.5/255),
+                so RDistanceFromWhite would be 255 - (255+255+0+0)/4, and this would be divided by (127.5/255) then the new R color would be 255 - RDistanceFromWhite after said division
+                and the same would go for G and B
+
+                (where in rendering the image, alpha would basically adjust the distance from white, being a multiplier for the distance from white, and so it would multiply back the distance from white by (127.5/255))
+                *
+                * */
+                // Or, calculate the sum of the R/G/B values and the average A value for the corresponding 2x2 block of pixels in the original image. This is where this would be like all of the colors would be added together unweighted and share the same alpha.
                 int sumR = 0;
                 int sumG = 0;
                 int sumB = 0;
+                int sumA = 0;
                 for (int ii = 0; ii < 2; ii++) {
                     for (int jj = 0; jj < 2; jj++) {
+                        // Convert 255,255,255,255 colors to 0,0,0,0 colors
+                        if (Arrays.equals(img[2*i+ii][2*j+jj], new int[] {255, 255, 255, 255})) {
+                            sumR += 0;
+                            sumG += 0;
+                            sumB += 0;
+                            sumA += 0;
+                        } else {
+                            sumR += img[2*i+ii][2*j+jj][0];
+                            sumG += img[2*i+ii][2*j+jj][1];
+                            sumB += img[2*i+ii][2*j+jj][2];
+                        }
+
                         sumR += img[i * 2 + ii][j * 2 + jj][0];
                         sumG += img[i * 2 + ii][j * 2 + jj][1];
                         sumB += img[i * 2 + ii][j * 2 + jj][2];
@@ -141,12 +165,13 @@ public class Draw {
         return newImg;
     }
 
+    // Now takes into account alpha
     public static void drawItem(int[][][] canvas, int[][][] item, int row, int col) {
         // Iterate through each pixel in the item image.
         for (int i = 0; i < item.length; i++) {
             for (int j = 0; j < item[0].length; j++) {
                 // If the current pixel in the item image is not white, draw it on the corresponding pixel in the canvas image.
-                if (!Arrays.equals(item[i][j], new int[] {255, 255, 255})) {
+                if (!Arrays.equals(item[i][j], new int[] {255, 255, 255, 255}) || item[i][j][3] == 0) {
                     canvas[row + i][col + j] = item[i][j];
                 }
             }

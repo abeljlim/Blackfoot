@@ -263,9 +263,9 @@ public class cmpt120image {
                 int[] pixel = pixels[row][col];
 
                 // These are colors when adjusted for alpha when having a white background.
-                int redColor = (int) ((pixel[0] * pixel[3]) + (255 * (1 - pixel[3])));
-                int greenColor = (int) ((pixel[1] * pixel[3]) + (255 * (1 - pixel[3])));
-                int blueColor = (int) ((pixel[2] * pixel[3]) + (255 * (1 - pixel[3])));
+                int redColor = (int) ((pixel[0] * (pixel[3] / 255.0)) /*alpha-adjusted color fraction*/ + (255 - pixel[3]) /*white background fraction*/);
+                int greenColor = (int) ((pixel[1] * (pixel[3] / 255.0)) + (255 - pixel[3]));
+                int blueColor = (int) ((pixel[2] * (pixel[3] / 255.0)) + (255 - pixel[3]));
 
                 image.setPixel(col, row, Color.rgb(redColor, greenColor, blueColor));
             }
