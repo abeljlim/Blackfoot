@@ -102,7 +102,7 @@ public class Draw {
         // Iterate through each pixel in the new image.
         for (int i = 0; i < newHeight; i++) {
             for (int j = 0; j < newWidth; j++) {
-                // TODO: Calculate the weighted (by alpha value, where the lower the alpha value, the more white that the color would be) sum of the R/G/B values and the corresponding A value that would be adjusted for the weighting of the sum for the corresponding 2x2 block of pixels in the original image.
+                // Done: Calculate the weighted (by alpha value, where the lower the alpha value, the more white that the color would be) sum of the R/G/B values and the corresponding A value that would be adjusted for the weighting of the sum for the corresponding 2x2 block of pixels in the original image.
                 // Then, convert the color to be one adjusted for alpha, where the corresponding 'more opaque' color and alpha value that would be the average alpha value would be obtained
                 /* E.g. (255,0,0,0), (0,0,0,0), (0,0,0,255), (0,0,0,255) would be calculated to be first ((255+255+0+0), (255+255+0+0), (255+255+0+0), (255+255+255+255)),
                 then we would get the average alpha to be (0+0+255+255)/4 = 127.5,
