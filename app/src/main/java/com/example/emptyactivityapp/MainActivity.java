@@ -125,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void change(View v){
+    /*public void change(View v){
         displayedImageView.setImageResource(R.drawable.child);
-    }
+    }*/
 
     public void learn(View v) {
 

@@ -7,8 +7,8 @@
 
     <EditText
         android:id="@+id/editTextNumToLearnNumber"
-        android:layout_width="116dp"
-        android:layout_height="50dp"
+        android:layout_width="103dp"
+        android:layout_height="59dp"
         android:ems="10"
         android:inputType="number"
         android:textAlignment="center"
@@ -20,21 +20,26 @@
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="294dp"
+        android:layout_height="117dp"
         android:backgroundTint="#384BFF"
         android:onClick="backToMenu"
         android:text="Back to Menu"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumToLearnNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumToLearnNumber"
+        app:layout_constraintVertical_bias="0.645" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Set the number of words to be learned:"
+        android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/editTextNumToLearnNumber"
         app:layout_constraintEnd_toEndOf="parent"

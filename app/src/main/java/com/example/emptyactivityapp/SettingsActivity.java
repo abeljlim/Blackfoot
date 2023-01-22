@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import static android.content.ContentValues.TAG;
 
@@ -35,6 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
         mediaPlayer.start();
     }
     EditText editTextNumber;
+    TextView promptTextView;
     int maxNumToLearn;
     final int MIN_NUMTOLEARN = 3; // A hard-coded value
 
@@ -44,6 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         //playSound(context, "apples");
         editTextNumber = (EditText)findViewById(R.id.editTextNumToLearnNumber);
+        promptTextView = findViewById(R.id.textView);
         maxNumToLearn = 3;
 
         Bundle extras = getIntent().getExtras();
@@ -52,6 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
             editTextNumber.setText(String.valueOf(extras.getInt("numToLearn", 3)));
             maxNumToLearn = extras.getInt("maxNumToLearn", 3);
         }
+        promptTextView.setText("Set the number of words to be learned ("+MIN_NUMTOLEARN+"-"+maxNumToLearn+"): ");
 
         editTextNumber.addTextChangedListener(new TextWatcher() {
             @Override
@@ -64,24 +68,39 @@ public class SettingsActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                // Cap the number of editTextNumber's field to be maxNumToLearn
-                if(editTextNumber.getText().toString().length() > 0) {
-                    int editTextNumberValue = Integer.parseInt(editTextNumber.getText().toString());
-                    if (editTextNumberValue > maxNumToLearn) {
-                        editTextNumber.setText(String.valueOf(maxNumToLearn));
-                    }
-                    else if(editTextNumberValue < MIN_NUMTOLEARN) {
-                        editTextNumber.setText(String.valueOf(MIN_NUMTOLEARN));
-                    }
+            }
+        });
+        /*
+        editTextNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                // When focus is lost check that the text field has valid values.
+
+                if (!hasFocus) {
+                    // Validate youredittext
                 }
             }
         });
+         */
     }
 
 
     public void backToMenu(View v) {
         if(editTextNumber.getText().toString().length() == 0) { // If not a valid numToLearn, then do nothing
             return;
+        }
+
+        // Cap the number of editTextNumber's field to be maxNumToLearn
+        if(editTextNumber.getText().toString().length() > 0) {
+            int editTextNumberValue = Integer.parseInt(editTextNumber.getText().toString());
+            if (editTextNumberValue > maxNumToLearn) {
+                editTextNumber.setText(String.valueOf(maxNumToLearn));
+            }
+            else if(editTextNumberValue < MIN_NUMTOLEARN) {
+                editTextNumber.setText(String.valueOf(MIN_NUMTOLEARN));
+            }
         }
 
         Intent intentSettings = new Intent(SettingsActivity.this ,

@@ -114,7 +114,7 @@ public class cmpt120image {
 
     ImageView imageView;
 
-    public static int[][][] getImage(Context context, String assetName) {
+    public static int[][][] getImage_blackWhiteBG(Context context, String assetName) {
         /*
         // Get the AssetManager instance.
         AssetManager assetManager = context.getAssets();
@@ -148,20 +148,37 @@ public class cmpt120image {
         int[][][] pixels = new int[height][width][4];
 
         // Iterate through each pixel in the image and get its color.
+        // Convert the color to a corresponding 'more opaque' black color and corresponding alpha
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 int pixel = image.getPixel(col, row);
-                pixels[row][col][0] = Color.red(pixel);
-                pixels[row][col][1] = Color.green(pixel);
-                pixels[row][col][2] = Color.blue(pixel);
-                pixels[row][col][3] = 255;
+                int origR = Color.red(pixel);
+                int origG = Color.green(pixel);
+                int origB = Color.blue(pixel);
+                //int origA = 255;
+
+
+                // Convert the color to a corresponding 'more opaque' black color and corresponding alpha
+                // Get the distance from white, then divide that by a max distance from white of 255*3 to get the alpha
+                double differenceFromWhite = ((255 - origR) + (255 - origG) + (255 - origB));
+                double A = differenceFromWhite / (255*3);
+
+                // So for an alpha of 127.5, we get the corresponding 'more opaque' color to be where the distance from white (i.e. RGB of (255,255,255)) would be divided by (127.5/255),
+                // so RDistanceFromWhite_ForMO would be 255 - (255+255+0+0)/4, and this would be divided by (127.5/255) then the new R_MO color would be 255 - RDistanceFromWhite_ForMO after said division
+                // and the same would go for G and B
+                // where this would all ultimately result in R, G, and B being 0 or close to 0, where I can treat all of them as being 0
+
+                pixels[row][col][0] = 0;
+                pixels[row][col][1] = 0;
+                pixels[row][col][2] = 0;
+                pixels[row][col][3] = (int)(A * 255);
             }
         }
 
         return pixels;
     }
 
-    public static int[][][] getImage(ImageView iv) {
+    public static int[][][] getImage_blackWhiteBG(ImageView iv) {
         /*
         // Get the AssetManager instance.
         AssetManager assetManager = context.getAssets();
@@ -262,8 +279,23 @@ public class cmpt120image {
             for (int col = 0; col < width; col++) {
                 int[] pixel = pixels[row][col];
 
+
+                /*
+                *
+                Short answer:
+                if we want to overlay c0 over c1 both with some alpha then
+                a01 = (1 - a0)·a1 + a0
+                r01 = ((1 - a0)·a1·r1 + a0·r0) / a01
+                g01 = ((1 - a0)·a1·g1 + a0·g0) / a01
+                b01 = ((1 - a0)·a1·b1 + a0·b0) / a01
+                *
+                * For overlaying over white, this would be
+                * r0 over 1 = (1 - a0)·r1 (white background fraction) + a0·r0 (alpha-adjusted color fraction)
+                * and the same for g & b components
+                * where I would consider this to be where a, r, g, and b being from 0 to 1, or just a being from 0 to 1 and where the rest would be 0 to 255
+                * */
                 // These are colors when adjusted for alpha when having a white background.
-                int redColor = (int) ((pixel[0] * (pixel[3] / 255.0)) /*alpha-adjusted color fraction*/ + (255 - pixel[3]) /*white background fraction*/);
+                int redColor = (int) ((pixel[0] * (pixel[3] / 255.0)) /* alpha-adjusted color fraction, a0·r0 */ + (255 - pixel[3]) /* white background fraction, (1 - a0)·r1 */);
                 int greenColor = (int) ((pixel[1] * (pixel[3] / 255.0)) + (255 - pixel[3]));
                 int blueColor = (int) ((pixel[2] * (pixel[3] / 255.0)) + (255 - pixel[3]));
 

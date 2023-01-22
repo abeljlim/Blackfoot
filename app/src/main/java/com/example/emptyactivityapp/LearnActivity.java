@@ -81,7 +81,7 @@ public class LearnActivity extends AppCompatActivity {
         // Get image
         learnDisplayedImageView = findViewById(R.id.learnDisplayedImageView);
         learnDisplayedImageView.setImageResource(context.getResources().getIdentifier(CSVline, "drawable", context.getPackageName()));
-        int[][][] displayedImage = cmpt120image.getImage(learnDisplayedImageView);
+        int[][][] displayedImage = cmpt120image.getImage_blackWhiteBG(learnDisplayedImageView);
 
         int[][][] canvasData = cmpt120image.getWhiteImage(learnCanvasView.getWidth()/MainActivity.CANVAS_IMAGE_SCALE, learnCanvasView.getHeight()/MainActivity.CANVAS_IMAGE_SCALE);
         Random rand = new Random();
@@ -91,7 +91,7 @@ public class LearnActivity extends AppCompatActivity {
 
         //Log.i(TAG,"canvasData cols: "+learnCanvasView.getWidth()/MainActivity.CANVAS_IMAGE_SCALE+"; canvasData rows: "+learnCanvasView.getHeight()/MainActivity.CANVAS_IMAGE_SCALE);
         //Log.i(TAG,"randPosnCol: "+randPosnCol+"; randPosnRow: "+randPosnRow+";");
-        Draw.drawItem(canvasData, displayedImage, randPosnRow, randPosnCol);
+        Draw.drawItem_whiteBG(canvasData, displayedImage, randPosnRow, randPosnCol);
         cmpt120image.renderImageToView_whiteBG(canvasData, learnCanvasView);
     }
 
