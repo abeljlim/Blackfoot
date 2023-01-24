@@ -16,34 +16,9 @@ public class Draw {
             for (int j = 0; j < img[0].length; j++) {
                 if (!(Arrays.equals(img[i][j], new int[] {255, 255, 255, 255}) || img[i][j][3] == 0) /*if alpha is 0 or the color is white*/) {
                     int[] oldColor = img[i][j];
-                    //double blackPercent = ((255-oldColor[0]) + (255-oldColor[1]) + (255-oldColor[2])) / (255.0 * 3);
-                    // So for color (255,0,0) when blackPercent is 100, newRed would be 255, newGreen would be 0, and newBlue would be 0; and when blackPercent is 0, newRed would be 255, newGreen would be 255, and newBlue would be 255.
-
-                    /*
-                    int redRange = 255 - color[0];
-                    int greenRange = 255 - color[1];
-                    int blueRange = 255 - color[2];
-
-                    int newRed = (int)(color[0] + (redRange * (1-blackPercent)));
-                    int newGreen = (int)(color[1] + (greenRange * (1-blackPercent)));
-                    int newBlue = (int)(color[2] + (blueRange * (1-blackPercent)));
-
-
-                    int newRed = (int) ((color[0] * blackPercent) + (255 * (1 - blackPercent)));
-                    int newGreen = (int) ((color[1] * blackPercent) + (255 * (1 - blackPercent)));
-                    int newBlue = (int) ((color[2] * blackPercent) + (255 * (1 - blackPercent)));
-
-                     */
-
-                    /*
-                    newImg[i][j][0] = newRed;
-                    newImg[i][j][1] = newGreen;
-                    newImg[i][j][2] = newBlue;
-                     */
                     newImg[i][j][0] = color[0];
                     newImg[i][j][1] = color[1];
                     newImg[i][j][2] = color[2];
-                    //newImg[i][j][3] = (int)(blackPercent * 255);
                     newImg[i][j][3] = oldColor[3];
                 }
             }
@@ -56,30 +31,10 @@ public class Draw {
         for (int i = 0; i < img.length; i++) {
             for (int j = 0; j < img[0].length; j++) {
                 if (!(Arrays.equals(img[i][j], new int[] {255, 255, 255, 255}) || img[i][j][3] == 0)) {
-                    //int[] oldColor = img[i][j];
-                    //double blackPercent = ((255-oldColor[0]) + (255-oldColor[1]) + (255-oldColor[2])) / (255.0 * 3);
-                    // So for color (255,0,0) when blackPercent is 100, newRed would be 255, newGreen would be 0, and newBlue would be 0; and when blackPercent is 0, newRed would be 255, newGreen would be 255, and newBlue would be 255.
-
-                    //int redRange = 255 - color[0];
-                    //int greenRange = 255 - color[1];
-                    //int blueRange = 255 - color[2];
-
-                    //int newRed = (int)(color[0] + (redRange * (1-blackPercent)));
-                    //int newGreen = (int)(color[1] + (greenRange * (1-blackPercent)));
-                    //int newBlue = (int)(color[2] + (blueRange * (1-blackPercent)));
-
-                    /*
-                    int newRed = (int) ((color[0] * blackPercent) + (255 * (1 - blackPercent)));
-                    int newGreen = (int) ((color[1] * blackPercent) + (255 * (1 - blackPercent)));
-                    int newBlue = (int) ((color[2] * blackPercent) + (255 * (1 - blackPercent)));
-
-                     */
-
                     newImg[i][j][0] = color[0];
                     newImg[i][j][1] = color[1];
                     newImg[i][j][2] = color[2];
                     newImg[i][j][3] = 255;
-                    //newImg[i][j] = color;
                 }
             }
         }
@@ -104,30 +59,6 @@ public class Draw {
             for (int j = 0; j < newWidth; j++) {
                 // Done: Calculate the weighted (by alpha value, where the lower the alpha value, the more white that the color would be) sum of the R/G/B values and the corresponding A value that would be adjusted for the weighting of the sum for the corresponding 2x2 block of pixels in the original image.
                 // Then, convert the color to be one adjusted for alpha, where the corresponding 'more opaque' color and alpha value that would be the average alpha value would be obtained
-                /* E.g. (255,0,0,0), (0,0,0,0), (0,0,0,255), (0,0,0,255) would be calculated to be first ((255+255+0+0), (255+255+0+0), (255+255+0+0), (255+255+255+255)),
-                then we would get the average alpha to be (0+0+255+255)/4 = 127.5,
-                then we would get the corresponding 'more opaque' color to be where the distance from white (i.e. RGB of (255,255,255)) would be divided by (127.5/255),
-                so RDistanceFromWhite_ForMO would be 255 - (255+255+0+0)/4, and this would be divided by (127.5/255) then the new R_MO color would be 255 - RDistanceFromWhite_ForMO after said division
-                and the same would go for G and B
-
-                ABOUT THIS:
-                (where in rendering the image, alpha would basically adjust the distance from white, being a multiplier for the distance from white, and so it would multiply back the distance from white by (127.5/255))
-
-                ...where this would mean that the alpha-adjusted corresponding 'more opaque' colors that are averaged together would all have the same alpha value, which would be the average alpha value ... regardless of the original colors' alpha values
-                well, this would be like the alpha-adjusted corresponding colors all having an alpha value of 100%
-                where I guess this would mean that these colors (that would have alphas) going over other colors would no longer have the distribution of alpha transparencies when going over other colors and instead would have a single, shared (that would be equal) average alpha transparency.
-                This is a loss that might not be that big...but to preserve the alphas, it would be ideal to not convert colors like this
-                and instead do minify pixel resolution after drawing overlays where the range of pixels (- IOW, the size of the array of pixels -) for an image would be twice the minified image's width and height
-                where all overlays of each pixel would be done first before minify pixel resolution (that would be merging the pixels into an average)
-                Not T*DO anymore: complete clarification of the ideal if it's not completely clarified where I can note whether or not this would result in a different average depending on whether minify pixel resolution would be done after drawing overlays (which would take the distribution into account) or before drawing overlays (which wouldn't take the distribution into account)
-                where I can try an example ...
-                which could get really complicated ...
-                but what I'm doing would also result in rather complicated programming of overlays ... for this method, and for drawItem ... but where I implemented drawItem ... and just have to test it now
-
-                and from testing, it looks like minify didn't have much issue with overlapping colors.
-                *
-                * */
-                // Or, calculate the sum of the R/G/B values and the average A value for the corresponding 2x2 block of pixels in the original image. This is where this would be like all of the colors would be added together unweighted and share the same alpha.
                 int sumR = 0;
                 int sumG = 0;
                 int sumB = 0;
@@ -181,11 +112,6 @@ public class Draw {
                     }
                 }
 
-                // Set the R/G/B values of the current pixel in the new image to the average of the corresponding 2x2 block of pixels in the original image.
-                //newImg[i][j][0] = sumR / 4;
-                //newImg[i][j][1] = sumG / 4;
-                //newImg[i][j][2] = sumB / 4;
-
                 // Get "step 2" average colors
                 int averageR = sumR / 4;
                 int averageG = sumG / 4;
@@ -195,10 +121,6 @@ public class Draw {
                 int averageA = sumA / 4;
 
                 // Get corresponding 'more opaque' color
-                // we would get the corresponding 'more opaque' color to be where the distance from white (i.e. RGB of (255,255,255)) would be divided by (127.5/255),
-                // so RDistanceFromWhite_ForMO would be 255 - (255+255+0+0)/4, and this would be divided by (127.5/255) then the new R_MO color would be 255 - RDistanceFromWhite_ForMO after said division
-                // and the same would go for G and B
-
                 int RDistanceFromWhite_ForMO = 255 - averageR;
 
                 // Divide the distance from white by averageA
